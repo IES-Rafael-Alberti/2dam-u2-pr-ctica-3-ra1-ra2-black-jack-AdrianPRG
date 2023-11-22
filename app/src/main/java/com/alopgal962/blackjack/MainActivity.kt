@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alopgal962.blackjack.clases.Routes
 import com.alopgal962.blackjack.screens.screenmenu
+import com.alopgal962.blackjack.screens.screenpersonalziar
 import com.alopgal962.blackjack.screens.screenplayervsplayer
 import com.alopgal962.blackjack.ui.theme.BlackJackTheme
 
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = Routes.screenmenu.route
                     ) {
                         composable(Routes.screenmenu.route) { screenmenu(navcontroller) }
-                        composable(Routes.screenpvp.route) { screenplayervsplayer(navcontroller) }
+                        composable(Routes.screennombre.route) { screenpersonalziar(navcontroller) }
                     }
                 }
             }
