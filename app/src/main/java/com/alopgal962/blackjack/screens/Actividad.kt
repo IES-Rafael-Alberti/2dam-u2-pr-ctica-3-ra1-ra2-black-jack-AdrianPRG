@@ -25,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,10 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.alopgal962.blackjack.clases.Baraja
+import com.alopgal962.blackjack.clases.Carta
 import com.alopgal962.blackjack.clases.Jugador
 import com.alopgal962.blackjack.clases.Routes
 
 import com.alopgal962.blackjack.ui.theme.BlackJackTheme
+import kotlinx.coroutines.delay
+import java.sql.Time
 
 class Actividad : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +96,7 @@ fun screenmenu(navcontroller: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun screenpersonalziar(navcontroller: NavHostController) {
     var nombre1 by rememberSaveable {
@@ -171,10 +176,11 @@ fun screenplayervsplayer(nomp1: String, nomp2: String) {
     //nombres
     jugador1.nombre = nomp1
     jugador2.nombre = nomp2
+    jugador1.inicializarcarta()
+    jugador2.inicializarcarta()
     //barajar
     Baraja.crearbaraja()
     Baraja.barajar()
-    //estados
     //pantalla
     Column(
         modifier = Modifier
@@ -183,100 +189,81 @@ fun screenplayervsplayer(nomp1: String, nomp2: String) {
         verticalArrangement = Arrangement.Center
     )
     {
-        Screenplayer1(jugador1 = jugador1, jugador2 = jugador2, turno = false,0,0)
+        Screenplayer1(jugador1 = jugador1, jugador2 = jugador2,false,false)
     }
 }
 
 @Composable
-fun Screenplayer1(jugador1: Jugador, jugador2: Jugador, turno: Boolean, cont:Int, cont2:Int) {
-    var turno2 by rememberSaveable { mutableStateOf(turno) }
-    var contador by rememberSaveable { mutableStateOf(cont)}
-    if (turno2 == false) {
-        screencompartida(jugador1 = jugador1, jugador2 = jugador2, turno = true)
-        Text(text = "$contador")
+fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta:Boolean) {
+    var siguiente by rememberSaveable { mutableStateOf(turno) }
+    var verlacarta by rememberSaveable { mutableStateOf(vercarta) }
+    if(!siguiente){
+        screencompartida(jugador = jugador1)
+        Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable)
         Row(modifier = Modifier.padding(top = 150.dp))
         {
-        Button(onClick = { contador+=1
-            turno2 }) { Text(text = "DAME CARTA") }
-        Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") }
+            Button(onClick = { jugador1.listacartas.add(Baraja.damecarta())
+                siguiente=!siguiente
+            verlacarta=true}) { Text(text = "DAME CARTA") }
+            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") }
         }
-        turno2=true
     }
-    else
-        Screenplayer2(jugador1 = jugador1, jugador2 = jugador2, turno = false, contador,cont2)
+    else{
+        if (verlacarta){
+            Text(text = "CARTA RECIBIDAD:")
+            Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable)
+            Button(onClick = { verlacarta=false }) {
+                Text(text = "CONTINUAR")
+            }
+        }
+        else
+            Screenplayer2(jugador1 = jugador1 , jugador2 = jugador2, turno = false,false)
+    }
 }
 
 @Composable
-fun Screenplayer2(jugador1: Jugador, jugador2: Jugador, turno: Boolean, contador:Int, contador2:Int) {
-    var turno1 by rememberSaveable { mutableStateOf(turno) }
-    var cont2 by rememberSaveable {
-        mutableStateOf(contador2)
+fun Screenplayer2(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta: Boolean) {
+    var siguiente by rememberSaveable {
+        mutableStateOf(turno) }
+    var verlacarta by rememberSaveable { mutableStateOf(vercarta) }
+    if (!siguiente){
+        screencompartida(jugador = jugador2)
+        Mostrarcarta(idimagen = jugador2.damecartajugador().iddrawable)
+        Row(modifier = Modifier.padding(top = 150.dp)) {
+            Button(onClick = { jugador2.listacartas.add(Baraja.damecarta())
+            siguiente=!siguiente
+            verlacarta=true}) { Text(text = "DAME CARTA") }
+            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") } }
     }
-    if (turno1 == false) {
-        screencompartida(jugador1 = jugador1, jugador2 = jugador2, turno = false)
-        Text(text = "$cont2")
-        Row(modifier = Modifier.padding(top = 250.dp)) {
-            Button(onClick = { cont2+=1
-                turno1 = true }) {
-                Text(text = "DAME CARTA")
-            }
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) {
-                Text(text = "MANTENER")
+    else{
+        if (verlacarta){
+            Text(text = "CARTA RECIBIDAD:")
+            Mostrarcarta(idimagen = jugador2.damecartajugador().iddrawable)
+            Button(onClick = { verlacarta=false }) {
+                Text(text = "CONTINUAR")
             }
         }
+        else
+            Screenplayer1(jugador1 = jugador1 , jugador2 = jugador2, turno = false,false)
     }
-    else
-        Screenplayer1(jugador1 = jugador1, jugador2 = jugador2, turno = false,contador,cont2)
+
 }
 
 @Composable
-fun screencompartida(jugador1: Jugador, jugador2: Jugador, turno: Boolean) {
-    if (turno) {
+fun screencompartida(jugador: Jugador) {
         Text(
-            text = "TURNO DE ${jugador1.nombre.uppercase()}", modifier = Modifier
+            text = "TURNO DE ${jugador.nombre.uppercase()}", modifier = Modifier
                 .padding(bottom = 20.dp)
                 .background(color = Color(95, 158, 124))
                 .border(3.dp, color = Color.Black), fontSize = 20.sp
         )
         Text(
-            text = jugador1.nombre,
+            text = "${jugador.nombre} --> ${jugador.contarpuntos()}",
             fontStyle = FontStyle.Normal,
             fontFamily = FontFamily.Monospace,
             modifier = Modifier.background(color = Color(191, 191, 120)),
             color = Color.Black
         )
-        Text(
-            text = jugador2.nombre,
-            fontStyle = FontStyle.Normal,
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier
-                .padding(top = 250.dp)
-                .background(color = Color.White)
-        )
-    } else {
-        Text(
-            text = "TURNO DE ${jugador2.nombre}", modifier = Modifier
-                .padding(bottom = 20.dp)
-                .background(color = Color(95, 158, 124))
-                .border(3.dp, color = Color.Black), fontSize = 20.sp
-        )
-        Text(
-            text = jugador1.nombre,
-            fontStyle = FontStyle.Normal,
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier.background(color = Color.White)
-        )
-        Text(
-            text = jugador2.nombre,
-            fontStyle = FontStyle.Normal,
-            fontFamily = FontFamily.Monospace,
-            color = Color.Black,
-            modifier = Modifier
-                .padding(top = 250.dp)
-                .background(color = Color(191, 191, 120))
-        )
-    }
-
 }
 
 @Composable
@@ -292,8 +279,7 @@ fun Mostrarcarta(idimagen: String) {
     var context = LocalContext.current
     var obtenerid = context.resources.getIdentifier(idimagen, "drawable", context.packageName)
     var painter = painterResource(id = obtenerid)
-    var image = Image(painter = painter, contentDescription = "carta", modifier = Modifier
-        .size(150.dp, 150.dp)
-        .padding(top = 30.dp))
-    return image
+     Image(painter = painter, contentDescription = "carta", modifier = Modifier
+         .size(300.dp, 300.dp)
+         .padding(top = 30.dp))
 }

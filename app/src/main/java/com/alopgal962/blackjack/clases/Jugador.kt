@@ -14,6 +14,14 @@ class Jugador() {
         return cont
     }
 
+    fun inicializarcarta(){
+        listacartas.add(Baraja.damecarta())
+    }
+
+    fun damecartajugador():Carta{
+        return listacartas.last()
+    }
+
     fun contarpuntos():Int{
         var puntos=0
         for (carta in listacartas){

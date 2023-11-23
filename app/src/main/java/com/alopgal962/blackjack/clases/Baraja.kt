@@ -21,7 +21,7 @@ class Baraja {
                         listacartas.add(cartaAS)
                     }
                     else if (contador==11){
-                        var carta11=Carta(palo,numero,contador,contador,"jack_of_$palo ")
+                        var carta11=Carta(palo,numero,contador,contador,"jack_of_$palo")
                         listacartas.add(carta11)
                     }
                     else if(contador==12){
@@ -44,16 +44,13 @@ class Baraja {
         fun barajar(){
             listacartas.shuffle()
         }
-        fun damecarta():String{
-            var id=""
+        fun damecarta():Carta{
             if (listacartas.isEmpty()){
                 crearbaraja()
             }
-            id = listacartas.last().iddrawable
             listacartas.removeAt(listacartas.size - 1)
-            Log.d("NOMBRE CARTA","$id")
-            return id
-            return id
+            return listacartas.last()
+
         }
 
     }
