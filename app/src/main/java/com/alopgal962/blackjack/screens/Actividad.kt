@@ -1,20 +1,22 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class
+)
 
 package com.alopgal962.blackjack.screens
 
-import android.content.Context
-import android.media.Image
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,12 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.alopgal962.blackjack.clases.Baraja
 import com.alopgal962.blackjack.clases.Jugador
@@ -109,7 +111,7 @@ fun screenpersonalziar(navcontroller: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                imagen(idimagen = "player1")
+                Imagen(idimagen = "player1")
                 Text(
                     text = "INTRODUCE NOMBRE JUGADOR 1",
                     color = Color.White,
@@ -138,7 +140,7 @@ fun screenpersonalziar(navcontroller: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                imagen(idimagen = "player2")
+                Imagen(idimagen = "player2")
                 Text(
                     text = "INTRODUCE NOMBRE JUGADOR 2",
                     color = Color.White,
@@ -173,7 +175,6 @@ fun screenplayervsplayer(nomp1: String, nomp2: String) {
     Baraja.crearbaraja()
     Baraja.barajar()
     //estados
-    var turno1 by rememberSaveable { mutableStateOf(true) }
     //pantalla
     Column(
         modifier = Modifier
@@ -182,73 +183,104 @@ fun screenplayervsplayer(nomp1: String, nomp2: String) {
         verticalArrangement = Arrangement.Center
     )
     {
-        if (turno1) {
-            Text(text = "TURNO DE ${jugador1.nombre}", modifier = Modifier.padding(bottom = 20.dp))
-            Text(
-                text = jugador1.nombre,
-                fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier.background(color = Color.White),
-                color = Color.Yellow
-            )
-            Text(
-                text = jugador2.nombre,
-                fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier
-                    .padding(top = 250.dp)
-                    .background(color = Color.White)
-            )
-            Row(modifier = Modifier.padding(top = 250.dp)) {
-                botonesuser()
+        Screenplayer1(jugador1 = jugador1, jugador2 = jugador2, turno = false,0,0)
+    }
+}
+
+@Composable
+fun Screenplayer1(jugador1: Jugador, jugador2: Jugador, turno: Boolean, cont:Int, cont2:Int) {
+    var turno2 by rememberSaveable { mutableStateOf(turno) }
+    var contador by rememberSaveable { mutableStateOf(cont)}
+    if (turno2 == false) {
+        screencompartida(jugador1 = jugador1, jugador2 = jugador2, turno = true)
+        Text(text = "$contador")
+        Row(modifier = Modifier.padding(top = 150.dp))
+        {
+        Button(onClick = { contador+=1
+            turno2 }) { Text(text = "DAME CARTA") }
+        Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") }
+        }
+        turno2=true
+    }
+    else
+        Screenplayer2(jugador1 = jugador1, jugador2 = jugador2, turno = false, contador,cont2)
+}
+
+@Composable
+fun Screenplayer2(jugador1: Jugador, jugador2: Jugador, turno: Boolean, contador:Int, contador2:Int) {
+    var turno1 by rememberSaveable { mutableStateOf(turno) }
+    var cont2 by rememberSaveable {
+        mutableStateOf(contador2)
+    }
+    if (turno1 == false) {
+        screencompartida(jugador1 = jugador1, jugador2 = jugador2, turno = false)
+        Text(text = "$cont2")
+        Row(modifier = Modifier.padding(top = 250.dp)) {
+            Button(onClick = { cont2+=1
+                turno1 = true }) {
+                Text(text = "DAME CARTA")
             }
-            Button(
-                onClick = {turno1=false},
-                modifier = Modifier.padding(top = 10.dp)
-            ) {
-                Text(text = "VOLVER ATRAS/FINALIZAR")
-            }
-        } else {
-            Text(text = "TURNO DE ${jugador2.nombre}", modifier = Modifier.padding(bottom = 20.dp))
-            Text(
-                text = jugador1.nombre,
-                fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier.background(color = Color.White)
-            )
-            Text(
-                text = jugador2.nombre,
-                fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier
-                    .padding(top = 250.dp)
-                    .background(color = Color.White)
-            )
-            Row(modifier = Modifier.padding(top = 250.dp)) {
-                botonesuser()
-            }
-            Button(
-                onClick = {turno1=true},
-                modifier = Modifier.padding(top = 10.dp)
-            ) {
-                Text(text = "VOLVER ATRAS/FINALIZAR")
+            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) {
+                Text(text = "MANTENER")
             }
         }
     }
+    else
+        Screenplayer1(jugador1 = jugador1, jugador2 = jugador2, turno = false,contador,cont2)
 }
 
 @Composable
-fun botonesuser() {
-    Button(onClick = { }) {
-        Text(text = "DAME CARTA")
+fun screencompartida(jugador1: Jugador, jugador2: Jugador, turno: Boolean) {
+    if (turno) {
+        Text(
+            text = "TURNO DE ${jugador1.nombre.uppercase()}", modifier = Modifier
+                .padding(bottom = 20.dp)
+                .background(color = Color(95, 158, 124))
+                .border(3.dp, color = Color.Black), fontSize = 20.sp
+        )
+        Text(
+            text = jugador1.nombre,
+            fontStyle = FontStyle.Normal,
+            fontFamily = FontFamily.Monospace,
+            modifier = Modifier.background(color = Color(191, 191, 120)),
+            color = Color.Black
+        )
+        Text(
+            text = jugador2.nombre,
+            fontStyle = FontStyle.Normal,
+            fontFamily = FontFamily.Monospace,
+            modifier = Modifier
+                .padding(top = 250.dp)
+                .background(color = Color.White)
+        )
+    } else {
+        Text(
+            text = "TURNO DE ${jugador2.nombre}", modifier = Modifier
+                .padding(bottom = 20.dp)
+                .background(color = Color(95, 158, 124))
+                .border(3.dp, color = Color.Black), fontSize = 20.sp
+        )
+        Text(
+            text = jugador1.nombre,
+            fontStyle = FontStyle.Normal,
+            fontFamily = FontFamily.Monospace,
+            modifier = Modifier.background(color = Color.White)
+        )
+        Text(
+            text = jugador2.nombre,
+            fontStyle = FontStyle.Normal,
+            fontFamily = FontFamily.Monospace,
+            color = Color.Black,
+            modifier = Modifier
+                .padding(top = 250.dp)
+                .background(color = Color(191, 191, 120))
+        )
     }
-    Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) {
-        Text(text = "MANTENER")
-    }
+
 }
 
 @Composable
-fun imagen(idimagen: String) {
+fun Imagen(idimagen: String) {
     var context = LocalContext.current
     var obtenerid = context.resources.getIdentifier(idimagen, "drawable", context.packageName)
     var painter = painterResource(id = obtenerid)
@@ -256,20 +288,12 @@ fun imagen(idimagen: String) {
 }
 
 @Composable
-fun mostrarcarta(idimagen: String) {
+fun Mostrarcarta(idimagen: String) {
     var context = LocalContext.current
     var obtenerid = context.resources.getIdentifier(idimagen, "drawable", context.packageName)
     var painter = painterResource(id = obtenerid)
-    Image(painter = painter, contentDescription = "carta")
-}
-
-@Composable
-fun obtenercarta(jugador: Jugador, quien: Boolean) {
-    var playerturno by rememberSaveable {
-        mutableStateOf(quien)
-    }
-    if (playerturno) {
-        mostrarcarta(idimagen = Baraja.damecarta())
-    }
-
+    var image = Image(painter = painter, contentDescription = "carta", modifier = Modifier
+        .size(150.dp, 150.dp)
+        .padding(top = 30.dp))
+    return image
 }
