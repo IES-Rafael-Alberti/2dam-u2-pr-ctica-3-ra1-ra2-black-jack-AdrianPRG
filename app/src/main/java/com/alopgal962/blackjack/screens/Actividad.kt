@@ -210,9 +210,9 @@ fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta:Boo
     }
     else{
         if (verlacarta){
-            Text(text = "CARTA RECIBIDAD:")
+            Text(text = "CARTA RECIBIDAD:",modifier = Modifier.background(color = Color.Yellow).padding(bottom = 10.dp))
             Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable)
-            Button(onClick = { verlacarta=false }) {
+            Button(onClick = { verlacarta=false },modifier=Modifier.padding(top = 20.dp)) {
                 Text(text = "CONTINUAR")
             }
         }
@@ -237,9 +237,9 @@ fun Screenplayer2(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta: Bo
     }
     else{
         if (verlacarta){
-            Text(text = "CARTA RECIBIDAD:")
+            Text(text = "CARTA RECIBIDAD:",modifier = Modifier.background(color = Color.Yellow))
             Mostrarcarta(idimagen = jugador2.damecartajugador().iddrawable)
-            Button(onClick = { verlacarta=false }) {
+            Button(onClick = { verlacarta=false },modifier=Modifier.padding(top = 20.dp)) {
                 Text(text = "CONTINUAR")
             }
         }
