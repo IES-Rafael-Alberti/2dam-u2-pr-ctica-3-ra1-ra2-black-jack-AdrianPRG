@@ -12,9 +12,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -197,9 +200,15 @@ fun screenplayervsplayer(nomp1: String, nomp2: String) {
 fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta:Boolean) {
     var siguiente by rememberSaveable { mutableStateOf(turno) }
     var verlacarta by rememberSaveable { mutableStateOf(vercarta) }
+    var cont = 0
     if(!siguiente){
         screencompartida(jugador = jugador1)
-        Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable)
+        Box(modifier=Modifier.padding(end = 180.dp)) {
+            for (carta in jugador1.listacartas){
+                cont+=35
+                Mostrarcarta(idimagen = carta.iddrawable,cont,0)
+            }
+        }
         Row(modifier = Modifier.padding(top = 150.dp))
         {
             Button(onClick = { jugador1.listacartas.add(Baraja.damecarta())
@@ -210,8 +219,10 @@ fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta:Boo
     }
     else{
         if (verlacarta){
-            Text(text = "CARTA RECIBIDAD:",modifier = Modifier.background(color = Color.Yellow).padding(bottom = 10.dp))
-            Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable)
+            Text(text = "CARTA RECIBIDAD:",modifier = Modifier
+                .background(color = Color.Yellow)
+                .padding(bottom = 10.dp))
+            Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable,0,0)
             Button(onClick = { verlacarta=false },modifier=Modifier.padding(top = 20.dp)) {
                 Text(text = "CONTINUAR")
             }
@@ -226,9 +237,15 @@ fun Screenplayer2(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta: Bo
     var siguiente by rememberSaveable {
         mutableStateOf(turno) }
     var verlacarta by rememberSaveable { mutableStateOf(vercarta) }
+    var cont = 0
     if (!siguiente){
         screencompartida(jugador = jugador2)
-        Mostrarcarta(idimagen = jugador2.damecartajugador().iddrawable)
+        Box(modifier=Modifier.padding(end = 150.dp)) {
+            for (carta in jugador2.listacartas){
+                cont+=35
+                Mostrarcarta(idimagen = carta.iddrawable, cont,0)
+            }
+        }
         Row(modifier = Modifier.padding(top = 150.dp)) {
             Button(onClick = { jugador2.listacartas.add(Baraja.damecarta())
             siguiente=!siguiente
@@ -238,7 +255,7 @@ fun Screenplayer2(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta: Bo
     else{
         if (verlacarta){
             Text(text = "CARTA RECIBIDAD:",modifier = Modifier.background(color = Color.Yellow))
-            Mostrarcarta(idimagen = jugador2.damecartajugador().iddrawable)
+            Mostrarcarta(idimagen = jugador2.damecartajugador().iddrawable,0,0)
             Button(onClick = { verlacarta=false },modifier=Modifier.padding(top = 20.dp)) {
                 Text(text = "CONTINUAR")
             }
@@ -264,6 +281,7 @@ fun screencompartida(jugador: Jugador) {
             modifier = Modifier.background(color = Color(191, 191, 120)),
             color = Color.Black
         )
+    Spacer(modifier = Modifier.padding(bottom = 60.dp))
 }
 
 @Composable
@@ -275,11 +293,13 @@ fun Imagen(idimagen: String) {
 }
 
 @Composable
-fun Mostrarcarta(idimagen: String) {
+fun Mostrarcarta(idimagen: String,x:Int,y:Int) {
     var context = LocalContext.current
     var obtenerid = context.resources.getIdentifier(idimagen, "drawable", context.packageName)
     var painter = painterResource(id = obtenerid)
      Image(painter = painter, contentDescription = "carta", modifier = Modifier
-         .size(300.dp, 300.dp)
-         .padding(top = 30.dp))
+         .size(250.dp, 250.dp)
+         .padding(top = 30.dp)
+         .offset(x.dp, y.dp)
+     )
 }
