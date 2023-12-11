@@ -2,7 +2,6 @@ package com.alopgal962.blackjack.clases
 
 public class Jugador() {
 
-    companion object{
 
         var nombre=""
         var turno=Boolean
@@ -32,6 +31,5 @@ public class Jugador() {
             }
             return puntos
         }
-    }
 
 }

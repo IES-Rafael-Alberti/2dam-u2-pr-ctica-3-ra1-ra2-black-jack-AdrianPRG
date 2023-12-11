@@ -3,7 +3,7 @@
     ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class
 )
 
-package com.alopgal962.blackjack.screens
+package com.alopgal962.blackjack.uiscreens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -28,7 +28,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,32 +41,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.livedata.observeAsState
+
 import androidx.navigation.NavHostController
 import com.alopgal962.blackjack.clases.Baraja
-import com.alopgal962.blackjack.clases.Carta
 import com.alopgal962.blackjack.clases.Jugador
 import com.alopgal962.blackjack.clases.Routes
+import com.alopgal962.blackjack.logic.BlackjackVM
 
 import com.alopgal962.blackjack.ui.theme.BlackJackTheme
-import kotlinx.coroutines.delay
-import java.sql.Time
-
-class Actividad : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BlackJackTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun screenmenu(navcontroller: NavHostController) {
     Column(
@@ -99,76 +81,73 @@ fun screenmenu(navcontroller: NavHostController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun screenpersonalziar(navcontroller: NavHostController) {
-    var nombre1 by rememberSaveable {
-        mutableStateOf("")
-    }
-    var nombre2 by rememberSaveable {
-        mutableStateOf("")
-    }
-    var jugador1introduce by rememberSaveable { mutableStateOf(true) }
-    var irpartida by rememberSaveable { mutableStateOf(false) }
-    if (irpartida == false) {
-        if (jugador1introduce) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(95, 173, 132)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Imagen(idimagen = "player1")
-                Text(
-                    text = "INTRODUCE NOMBRE JUGADOR 1",
-                    color = Color.White,
-                    modifier = Modifier.padding(top = 40.dp)
-                )
-                TextField(
-                    value = nombre1,
-                    onValueChange = { nombre1 = it },
-                    label = { Text(text = "Nombre Jugador 1") },
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-                if (nombre1.isNotEmpty()) {
-                    Button(
-                        onClick = { jugador1introduce = false },
-                        modifier = Modifier.padding(40.dp)
-                    ) {
-                        Text(text = "CONFIRMAR PLAYER 1")
-                    }
-                }
-            }
-        } else
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(149, 153, 81)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Imagen(idimagen = "player2")
-                Text(
-                    text = "INTRODUCE NOMBRE JUGADOR 2",
-                    color = Color.White,
-                    modifier = Modifier.padding(top = 40.dp)
-                )
-                TextField(
-                    value = nombre2,
-                    onValueChange = { nombre2 = it },
-                    label = { Text(text = "Nombre Jugador 2") },
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-                if (nombre2.isNotEmpty()) {
-                    Button(onClick = { irpartida = true }, modifier = Modifier.padding(40.dp)) {
-                        Text(text = "CONFIRMAR PLAYER 2")
-                    }
-                }
-            }
-    } else
-        screenplayervsplayer(nombre1, nombre2)
+fun screenpersonalziar(navcontroller: NavHostController, blackjackvm:BlackjackVM) {
+    val turno:Boolean by blackjackvm.first.observeAsState(initial = false)
+    if (turno == false) { setp1name(blackjackvm) } else setp2name(blackjackvm)
 }
+
+
+@Composable
+fun setp1name(blackjackvm: BlackjackVM){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(149, 153, 81)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    )
+    {
+        Imagen(idimagen = "player1")
+        Text(
+            text = "INTRODUCE NOMBRE JUGADOR 1",
+            color = Color.White,
+            modifier = Modifier.padding(top = 40.dp)
+        )
+        TextField(
+            value = "",
+            onValueChange = { blackjackvm.setplayername(1,it) },
+            label = { Text(text = "Nombre Jugador 1") },
+            modifier = Modifier.padding(top = 20.dp)
+        )
+        Button(
+            onClick = { blackjackvm.cambiaranamejugador2() },
+            modifier = Modifier.padding(40.dp)
+        ) {
+            Text(text = "CONFIRMAR PLAYER 1")
+        }
+    }
+}
+
+
+@Composable
+fun setp2name(blackjackvm: BlackjackVM){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(149, 153, 81)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Imagen(idimagen = "player2")
+        Text(
+            text = "INTRODUCE NOMBRE JUGADOR 2",
+            color = Color.White,
+            modifier = Modifier.padding(top = 40.dp)
+        )
+        /*TextField(
+            value = "nombre2",
+            onValueChange = { "nombre2" = it },
+            label = { Text(text = "Nombre Jugador 2") },
+            modifier = Modifier.padding(top = 20.dp)
+        )
+        */
+        Button(onClick = { }, modifier = Modifier.padding(40.dp)) {
+            Text(text = "CONFIRMAR PLAYER 2")
+            }
+        }
+    }
 
 
 @Composable
