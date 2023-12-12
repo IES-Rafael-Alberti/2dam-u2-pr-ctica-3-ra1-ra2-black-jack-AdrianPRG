@@ -5,9 +5,6 @@
 
 package com.alopgal962.blackjack.uiscreens
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,15 +20,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +41,6 @@ import com.alopgal962.blackjack.clases.Jugador
 import com.alopgal962.blackjack.clases.Routes
 import com.alopgal962.blackjack.logic.BlackjackVM
 
-import com.alopgal962.blackjack.ui.theme.BlackJackTheme
 @Composable
 fun screenmenu(navcontroller: NavHostController) {
     Column(
@@ -83,104 +74,47 @@ fun screenmenu(navcontroller: NavHostController) {
 
 
 @Composable
-fun screenpersonalziar(navcontroller: NavHostController, blackjackvm:BlackjackVM) {
-    val turno:Boolean by blackjackvm.first.observeAsState(initial = false)
-    if (turno == false) { setp1name(blackjackvm) } else setp2name(blackjackvm)
+fun screeninicializacion(navcontroller: NavHostController, blackjackvm:BlackjackVM) {
+    blackjackvm.iniciar()
+    blackjackvm.crearbaraja()
+    blackjackvm.barajar()
+    blackjackvm.crearplayer()
+    blackjackvm.inicializarcartas()
+    blackjackvm.iniciarporuser1()
+    blackjackvm.queturnoes()
+    blackjackvm.cambiaturno()
+    screenplayers(blackjackvm)
 }
 
 
 @Composable
-fun setp1name(blackjackvm: BlackjackVM){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(149, 153, 81)),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    )
-    {
-        Imagen(idimagen = "player1")
-        Text(
-            text = "INTRODUCE NOMBRE JUGADOR 1",
-            color = Color.White,
-            modifier = Modifier.padding(top = 40.dp)
-        )
-        TextField(
-            value = "",
-            onValueChange = { blackjackvm.setplayername(1,it) },
-            label = { Text(text = "Nombre Jugador 1") },
-            modifier = Modifier.padding(top = 20.dp)
-        )
-        Button(
-            onClick = { blackjackvm.cambiaranamejugador2() },
-            modifier = Modifier.padding(40.dp)
-        ) {
-            Text(text = "CONFIRMAR PLAYER 1")
+fun screenplayers(blackjackvm: BlackjackVM){
+    val turnojugador:String by blackjackvm.jugadorturno.observeAsState(initial = blackjackvm.jugadorturno.value!!)
+    val jugador1:Jugador by blackjackvm.jugador1.observeAsState(initial = blackjackvm.jugador1.value!!)
+
+    Column(modifier= Modifier
+        .background(color = Color(35, 77, 25))
+        .fillMaxSize()) {
+        Text(text = "TURNO DE ${turnojugador}")
+        Row(modifier = Modifier.padding(2.dp)) {
+            Mostrarcarta(idimagen = blackjackvm.damecartaplayer(jugador1), x = 20 , y = 10 )
+        }
+        Row(modifier = Modifier.padding(top = 140.dp)) {}
+        Button(modifier = Modifier.padding(top = 40.dp),onClick = {
+            blackjackvm.queturnoes()
+            blackjackvm.cambiaturno()}) {
+            Text(text = "DAME CARTA")
         }
     }
 }
 
 
+/*
 @Composable
-fun setp2name(blackjackvm: BlackjackVM){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(149, 153, 81)),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Imagen(idimagen = "player2")
-        Text(
-            text = "INTRODUCE NOMBRE JUGADOR 2",
-            color = Color.White,
-            modifier = Modifier.padding(top = 40.dp)
-        )
-        /*TextField(
-            value = "nombre2",
-            onValueChange = { "nombre2" = it },
-            label = { Text(text = "Nombre Jugador 2") },
-            modifier = Modifier.padding(top = 20.dp)
-        )
-        */
-        Button(onClick = { }, modifier = Modifier.padding(40.dp)) {
-            Text(text = "CONFIRMAR PLAYER 2")
-            }
-        }
-    }
-
-
-@Composable
-fun screenplayervsplayer(nomp1: String, nomp2: String) {
-    //jugadores
-    var jugador1 = Jugador()
-    var jugador2 = Jugador()
-    //nombres
-    jugador1.nombre = nomp1
-    jugador2.nombre = nomp2
-    jugador1.inicializarcarta()
-    jugador2.inicializarcarta()
-    //barajar
-    Baraja.crearbaraja()
-    Baraja.barajar()
-    //pantalla
-    Column(
-        modifier = Modifier
-            .background(color = Color(17, 50, 59))
-            .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    )
-    {
-        Screenplayer1(jugador1 = jugador1, jugador2 = jugador2,false,false)
-    }
-}
-
-@Composable
-fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta:Boolean) {
-    var siguiente by rememberSaveable { mutableStateOf(turno) }
-    var verlacarta by rememberSaveable { mutableStateOf(vercarta) }
+fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,blackjackvm: BlackjackVM) {
     var cont = 0
-    if(!siguiente){
+    val continuea:Boolean by blackjackvm.continuar.observeAsState(initial = false)
+    if(continuea==false){
         screencompartida(jugador = jugador1)
         Box(modifier=Modifier.padding(end = 180.dp)) {
             for (carta in jugador1.listacartas){
@@ -190,57 +124,58 @@ fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta:Boo
         }
         Row(modifier = Modifier.padding(top = 150.dp))
         {
-            Button(onClick = { jugador1.listacartas.add(Baraja.damecarta())
-                siguiente=!siguiente
-            verlacarta=true}) { Text(text = "DAME CARTA") }
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") }
+            Button(onClick = {
+                jugador1.listacartas.add(Baraja.damecarta())
+                blackjackvm.setcontinuar()
+                blackjackvm.setseecarta()
+                            }) { Text(text = "DAME CARTA") }
+                            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") }
         }
     }
     else{
-        if (verlacarta){
+        if (blackjackvm.seecarta.value==true){
             Text(text = "CARTA RECIBIDAD:",modifier = Modifier
                 .background(color = Color.Yellow)
                 .padding(bottom = 10.dp))
             Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable,0,0)
-            Button(onClick = { verlacarta=false },modifier=Modifier.padding(top = 20.dp)) {
+            Button(onClick = { blackjackvm.setseecarta() },modifier=Modifier.padding(top = 20.dp)) {
                 Text(text = "CONTINUAR")
             }
         }
         else
-            Screenplayer2(jugador1 = jugador1 , jugador2 = jugador2, turno = false,false)
+            Screenplayer2(jugador1 = jugador1 , jugador2 = jugador2, turno = false,false,blackjackvm)
     }
 }
 
 @Composable
-fun Screenplayer2(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta: Boolean) {
-    var siguiente by rememberSaveable {
-        mutableStateOf(turno) }
-    var verlacarta by rememberSaveable { mutableStateOf(vercarta) }
+fun Screenplayer2(jugador1: Jugador, jugador2:Jugador,turno:Boolean,vercarta: Boolean,blackjackvm: BlackjackVM) {
     var cont = 0
-    if (!siguiente){
-        screencompartida(jugador = jugador2)
-        Box(modifier=Modifier.padding(end = 150.dp)) {
-            for (carta in jugador2.listacartas){
-                cont+=35
-                Mostrarcarta(idimagen = carta.iddrawable, cont,0)
+    if (blackjackvm.continuar.value==false){
+        Column {
+            screencompartida(jugador = jugador2)
+            Box(modifier=Modifier.padding(end = 150.dp)) {
+                for (carta in jugador2.listacartas){
+                    cont+=35
+                    Mostrarcarta(idimagen = carta.iddrawable, cont,0)
+                }
             }
+            Row(modifier = Modifier.padding(top = 150.dp)) {
+                Button(onClick = { jugador2.listacartas.add(Baraja.damecarta())
+                    blackjackvm.setcontinuar()
+                    blackjackvm.setseecarta()}) { Text(text = "DAME CARTA") }
+                Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") } }
         }
-        Row(modifier = Modifier.padding(top = 150.dp)) {
-            Button(onClick = { jugador2.listacartas.add(Baraja.damecarta())
-            siguiente=!siguiente
-            verlacarta=true}) { Text(text = "DAME CARTA") }
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") } }
     }
     else{
-        if (verlacarta){
+        if (blackjackvm.seecarta.value==true){
             Text(text = "CARTA RECIBIDAD:",modifier = Modifier.background(color = Color.Yellow))
             Mostrarcarta(idimagen = jugador2.damecartajugador().iddrawable,0,0)
-            Button(onClick = { verlacarta=false },modifier=Modifier.padding(top = 20.dp)) {
+            Button(onClick = { blackjackvm.setseecarta() },modifier=Modifier.padding(top = 20.dp)) {
                 Text(text = "CONTINUAR")
             }
         }
         else
-            Screenplayer1(jugador1 = jugador1 , jugador2 = jugador2, turno = false,false)
+            Screenplayer1(jugador1 = jugador1 , jugador2 = jugador2,blackjackvm)
     }
 
 }
@@ -262,6 +197,8 @@ fun screencompartida(jugador: Jugador) {
         )
     Spacer(modifier = Modifier.padding(bottom = 60.dp))
 }
+
+ */
 
 @Composable
 fun Imagen(idimagen: String) {
