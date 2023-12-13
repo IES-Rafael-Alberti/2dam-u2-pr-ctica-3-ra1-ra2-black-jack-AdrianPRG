@@ -14,69 +14,65 @@ class BlackjackVM():ViewModel() {
      * Primero creamos las que seran modificables
      */
 
-    private  var _jugador1 = MutableLiveData<Jugador>()
-    private var _jugador2 = MutableLiveData<Jugador>()
+    private  var _jugador1mutable = MutableLiveData<Jugador>()
+    private var _jugador2mutable = MutableLiveData<Jugador>()
     private var _start = MutableLiveData<Boolean>()
-    private var _continuar = MutableLiveData<Boolean>()
-    private var _seecarta = MutableLiveData<Boolean>()
     private var _turno = MutableLiveData<Boolean>()
     private var _jugadorturno = MutableLiveData<String>()
+    private var _ganadorjuego = MutableLiveData<String>()
+    private var _juegoterminado = MutableLiveData<Boolean>()
 
 
     /**
      * Las que se veran
      */
 
-    var jugador1:LiveData<Jugador> = _jugador1
-    var jugador2:LiveData<Jugador> = _jugador2
-    var continuar:LiveData<Boolean> = _continuar
-    var seecarta:LiveData<Boolean> = _seecarta
-    var turno:LiveData<Boolean> = _turno
+    var jugador1queseve:LiveData<Jugador> = _jugador1mutable
+    var jugador2queseve:LiveData<Jugador> = _jugador2mutable
     var jugadorturno:LiveData<String> = _jugadorturno
+    var ganadorjuego:LiveData<String> = _ganadorjuego
+    var juegoterminado:LiveData<Boolean> = _juegoterminado
 
     fun setstarttrue(){
         _start.value=true
     }
-
-    fun setcontinuar(){
-        _continuar.value=!_continuar.value!!
-    }
-    fun setseecarta(){
-        _seecarta.value=!_seecarta.value!!
-    }
     fun iniciarporuser1(){
         _turno.value=false
     }
-
     fun iniciar(){
         Baraja.crearbaraja()
         Baraja.barajar()
     }
-
     fun crearbaraja(){
         Baraja.crearbaraja()
     }
-
     fun barajar(){
         Baraja.barajar()
     }
+    fun juegoterminadoestado(){
+        _juegoterminado.value=false
+    }
 
     fun crearplayer(){
-        _jugador1.value=Jugador("ANTONIO", mutableListOf<Carta>())
-        _jugador2.value=Jugador("MANUEL", mutableListOf<Carta>())
+        _jugador1mutable.value=Jugador("PLAYER1", mutableListOf<Carta>())
+        _jugador2mutable.value=Jugador("PLAYER2", mutableListOf<Carta>())
     }
 
     fun inicializarcartas(){
-        _jugador1.value?.jugadorrecibecarta()
-        _jugador2.value?.jugadorrecibecarta()
+        _jugador1mutable.value?.anadircartaalista()
+        _jugador2mutable.value?.anadircartaalista()
     }
 
-    fun recibecartaplayer(jugador: Jugador){
-        jugador.jugadorrecibecarta()
+    fun recibecartaplayer(){
+        if (_jugadorturno.value=="JUGADOR 1"){
+            _jugador1mutable.value?.anadircartaalista()
+        }
+        else
+            _jugador2mutable.value?.anadircartaalista()
     }
 
     fun damecartaplayer(jugador:Jugador): String {
-        return jugador.damecartajugador().iddrawable
+        return jugador.dameimagencartajugador().iddrawable
     }
 
     fun queturnoes(){
@@ -90,6 +86,18 @@ class BlackjackVM():ViewModel() {
     fun cambiaturno(){
         _turno.value=!_turno.value!!
     }
+
+    fun comprobarganador(){
+        if (_jugador1mutable.value!!.contarpuntos()>=21 && _jugador2mutable.value!!.contarpuntos()<21){
+            _ganadorjuego.value="JUGADOR 2"
+            _juegoterminado.value=true
+        }
+        else if (_jugador1mutable.value!!.contarpuntos()<21 && _jugador2mutable.value!!.contarpuntos()>=21){
+            _ganadorjuego.value="JUGADOR 1"
+            _juegoterminado.value=true
+        }
+    }
+
 
 
 

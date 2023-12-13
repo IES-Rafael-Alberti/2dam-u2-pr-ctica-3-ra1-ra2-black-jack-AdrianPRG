@@ -11,11 +11,11 @@ public class Jugador( var nombre:String="", var listacartas:MutableList<Carta>?=
             return cont
         }
 
-        fun jugadorrecibecarta(){
+        fun anadircartaalista(){
             listacartas!!.add(Baraja.damecarta())
         }
 
-        fun damecartajugador():Carta{
+        fun dameimagencartajugador():Carta{
             return listacartas!!.last()
         }
 
