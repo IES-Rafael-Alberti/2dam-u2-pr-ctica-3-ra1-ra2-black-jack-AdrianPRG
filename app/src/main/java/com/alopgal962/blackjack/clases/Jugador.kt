@@ -1,6 +1,6 @@
 package com.alopgal962.blackjack.clases
 
-public class Jugador( var nombre:String="", var listacartas:MutableList<Carta>?=null ) {
+public class Jugador( var nombre:String="", var puntosdinero:Int=0, var listacartas:MutableList<Carta>?=null ) {
     
 
         fun contarcartas():Int{

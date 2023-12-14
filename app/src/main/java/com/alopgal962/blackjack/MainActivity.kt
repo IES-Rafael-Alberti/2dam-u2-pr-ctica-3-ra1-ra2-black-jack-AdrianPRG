@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = Routes.screenmenu.route
                     ) {
                         composable(Routes.screenmenu.route) { screenmenu(navcontroller) }
-                        composable(Routes.screennombre.route) { screeninicializacion(navcontroller,BlackJackvm) }
+                        composable(Routes.screeninicial.route) { screeninicializacion(navcontroller,BlackJackvm) }
                     }
                 }
             }

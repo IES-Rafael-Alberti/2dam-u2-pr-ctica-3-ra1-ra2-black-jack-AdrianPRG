@@ -21,15 +21,15 @@ class Baraja {
                         listacartas.add(cartaAS)
                     }
                     else if (contador==11){
-                        var carta11=Carta(palo,numero,contador,contador,"jack_of_$palo")
+                        var carta11=Carta(palo,numero,10,10,"jack_of_$palo")
                         listacartas.add(carta11)
                     }
                     else if(contador==12){
-                        var carta12=Carta(palo,numero,contador,contador,"queen_of_$palo")
+                        var carta12=Carta(palo,numero,10,10,"queen_of_$palo")
                         listacartas.add(carta12)
                     }
                     else if (contador==13){
-                        var carta13=Carta(palo,numero,contador,contador,"king_of_$palo")
+                        var carta13=Carta(palo,numero,10,10,"king_of_$palo")
                         listacartas.add(carta13)
                     }
                     else{

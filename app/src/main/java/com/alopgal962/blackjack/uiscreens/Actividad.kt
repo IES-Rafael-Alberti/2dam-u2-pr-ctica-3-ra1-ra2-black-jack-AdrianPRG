@@ -1,6 +1,8 @@
 @file:OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class
 )
 
 package com.alopgal962.blackjack.uiscreens
@@ -9,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,7 +55,7 @@ fun screenmenu(navcontroller: NavHostController) {
         Image(painter = painter, contentDescription = "blackjack")
         Row(modifier = Modifier.padding(top = 40.dp)) {
             Button(
-                onClick = { navcontroller.navigate(Routes.screennombre.route) },
+                onClick = { navcontroller.navigate(Routes.screeninicial.route) },
                 colors = ButtonDefaults.buttonColors(Color.Red)
             ) {
                 Text(text = "1 VS 1")
@@ -68,107 +71,105 @@ fun screenmenu(navcontroller: NavHostController) {
     }
 }
 
-
 @Composable
-fun screeninicializacion(navcontroller: NavHostController, blackjackvm:BlackjackVM) {
+fun screeninicializacion(navcontroller: NavHostController, blackjackvm: BlackjackVM) {
     blackjackvm.iniciar()
     blackjackvm.crearbaraja()
     blackjackvm.barajar()
     blackjackvm.crearplayer()
     blackjackvm.inicializarcartas()
     blackjackvm.iniciarporuser1()
-    blackjackvm.queturnoes()
-    blackjackvm.cambiaturno()
+    blackjackvm.primerojugador1()
     blackjackvm.juegoterminadoestado()
-    screenplayers(blackjackvm)
+    screenplayers(navcontroller,blackjackvm)
 }
 
 
 @Composable
-fun screenplayers(blackjackvm: BlackjackVM){
-    val turnojugador:String by blackjackvm.jugadorturno.observeAsState(initial = blackjackvm.jugadorturno.value!!)
-    val jugador1:Jugador by blackjackvm.jugador1queseve.observeAsState(initial = blackjackvm.jugador1queseve.value!!)
-    val jugador2:Jugador by blackjackvm.jugador2queseve.observeAsState(initial = blackjackvm.jugador1queseve.value!!)
-    val ganadorjuego:String by blackjackvm.ganadorjuego.observeAsState(initial = "")
-    val secontinuapartida:Boolean by blackjackvm.juegoterminado.observeAsState(initial = blackjackvm.juegoterminado.value!!)
+fun screenplayers(navcontroller: NavHostController,blackjackvm: BlackjackVM) {
+    val turnojugador: String by blackjackvm.jugadorturno.observeAsState(initial = blackjackvm.jugadorturno.value!!)
+    val jugador1: Jugador by blackjackvm.jugador1queseve.observeAsState(initial = blackjackvm.jugador1queseve.value!!)
+    val jugador2: Jugador by blackjackvm.jugador2queseve.observeAsState(initial = blackjackvm.jugador2queseve.value!!)
+    val ganadorjuego: String by blackjackvm.ganadorjuego.observeAsState(initial = "")
+    val secontinuapartida: Boolean by blackjackvm.juegoterminado.observeAsState(initial = blackjackvm.juegoterminado.value!!)
 
-    if (secontinuapartida==false){
-        Column(modifier= Modifier
-            .background(color = Color(35, 77, 25))
-            .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text(text = "TURNO DE ${turnojugador}", textAlign = TextAlign.Center, modifier = Modifier
-                .background(color = Color(95, 158, 124))
-                .border(3.dp, color = Color.Black), fontSize = 20.sp, )
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Text(text = "PUNTOS -> ${jugador1.contarpuntos()}")
-            }
-            Row(modifier = Modifier.padding(end = 30.dp)) {
-                Mostrarcarta(idimagen = blackjackvm.damecartaplayer(jugador1), x = 0 , y = 0 )
-            }
-            Column(modifier = Modifier.padding(top = 100.dp)) {
+    if (secontinuapartida == false) {
+        Column(
+            modifier = Modifier
+                .background(color = Color(35, 77, 25))
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "TURNO DE ${turnojugador}", textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .background(color = Color(95, 158, 124))
+                    .border(3.dp, color = Color.Black),
+                fontSize = 20.sp,
+            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "JUGADOR 2")
                 Text(text = "PUNTOS -> ${jugador2.contarpuntos()}")
             }
-            Row(modifier = Modifier
-                .padding(top = 10.dp)
-                .padding(end = 30.dp)) {
-                Mostrarcarta(idimagen = blackjackvm.damecartaplayer(jugador2), x = 0, y = 0 )
+            Box(modifier=Modifier.padding(end = 180.dp)) {
+                var cont=0
+                for (carta in jugador2.listacartas!!){
+                    Mostrarcarta(idimagen = carta.iddrawable,cont,0)
+                    cont+=35
+                }
             }
-            Button(modifier = Modifier.padding(top = 40.dp),onClick = {
-                blackjackvm.queturnoes()
-                blackjackvm.cambiaturno()
-                blackjackvm.recibecartaplayer()
-                blackjackvm.comprobarganador()
-            }) {
-                Text(text = "DAME CARTA")
+            Column(modifier = Modifier.padding(top = 100.dp)) {
+                Text(text = "JUGADOR 1")
+                Text(text = "PUNTOS -> ${jugador1.contarpuntos()}")
+            }
+            Box(modifier=Modifier.padding(end = 150.dp)) {
+                var cont=0
+                for (carta in jugador1.listacartas!!){
+                    Mostrarcarta(idimagen = carta.iddrawable,cont,0)
+                    cont+=35
+                }
+            }
+            Row(modifier = Modifier.padding(top = 40.dp)) {
+                Button(onClick = {
+                    blackjackvm.recibecartaplayer()
+                    blackjackvm.cambiaturno()
+                    blackjackvm.queturnoes()
+                    blackjackvm.comprobarganador()
+                }, colors = ButtonDefaults.buttonColors(Color(119, 158, 133))) {
+                    Text(text = "DAME CARTA", color = Color.Black)
+                }
+                Button(modifier = Modifier.padding(start = 20.dp), onClick = {
+                    blackjackvm.cambiaturno()
+                    blackjackvm.queturnoes()
+                }) {
+                    Text(text = "PLANTARME")
+                }
             }
         }
-    }
-    else
-        Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "GANADOR DE JUEGO ES --> ${ganadorjuego}")
+    } else Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(196, 165, 81)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "FIN DE PARTIDA", fontSize = 24.sp)
+        Text(text = "GANADOR: ${ganadorjuego}", fontSize = 18.sp)
+        Row(modifier = Modifier.padding(top = 80.dp)) {
+            Button(onClick = { /*TODO*/ }) {
+                Text(text = "VOLVER A JUGAR")
+            }
+            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 40.dp)) {
+                Text(text = "SALIR AL MENU PRINCIPAL")
+            }
+        }
     }
 
 }
-
-
-/*
-@Composable
-fun Screenplayer1(jugador1: Jugador, jugador2:Jugador,blackjackvm: BlackjackVM) {
-    var cont = 0
-    val continuea:Boolean by blackjackvm.continuar.observeAsState(initial = false)
-    if(continuea==false){
-        screencompartida(jugador = jugador1)
-        Box(modifier=Modifier.padding(end = 180.dp)) {
-            for (carta in jugador1.listacartas){
-                cont+=35
-                Mostrarcarta(idimagen = carta.iddrawable,cont,0)
-            }
-        }
-        Row(modifier = Modifier.padding(top = 150.dp))
-        {
-            Button(onClick = {
-                jugador1.listacartas.add(Baraja.damecarta())
-                blackjackvm.setcontinuar()
-                blackjackvm.setseecarta()
-                            }) { Text(text = "DAME CARTA") }
-                            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 20.dp)) { Text(text = "MANTENER") }
-        }
-    }
-    else{
-        if (blackjackvm.seecarta.value==true){
-            Text(text = "CARTA RECIBIDAD:",modifier = Modifier
-                .background(color = Color.Yellow)
-                .padding(bottom = 10.dp))
-            Mostrarcarta(idimagen = jugador1.damecartajugador().iddrawable,0,0)
-            Button(onClick = { blackjackvm.setseecarta() },modifier=Modifier.padding(top = 20.dp)) {
-                Text(text = "CONTINUAR")
-            }
-        }
-        else
-            Screenplayer2(jugador1 = jugador1 , jugador2 = jugador2, turno = false,false,blackjackvm)
-    }
-}
-*/
 
 @Composable
 fun Imagen(idimagen: String) {
@@ -179,13 +180,16 @@ fun Imagen(idimagen: String) {
 }
 
 @Composable
-fun Mostrarcarta(idimagen: String,x:Int,y:Int) {
+fun Mostrarcarta(idimagen: String, x: Int, y: Int) {
     var context = LocalContext.current
     var obtenerid = context.resources.getIdentifier(idimagen, "drawable", context.packageName)
     var painter = painterResource(id = obtenerid)
-     Image(painter = painter, contentDescription = "carta", modifier = Modifier
-         .size(250.dp, 250.dp)
-         .padding(top = 30.dp)
-         .offset(x.dp, y.dp)
-     )
+    Image(
+        painter = painter,
+        contentDescription = "carta",
+        modifier = Modifier
+            .size(250.dp, 250.dp)
+            .padding(top = 30.dp)
+            .offset(x.dp, y.dp)
+    )
 }
