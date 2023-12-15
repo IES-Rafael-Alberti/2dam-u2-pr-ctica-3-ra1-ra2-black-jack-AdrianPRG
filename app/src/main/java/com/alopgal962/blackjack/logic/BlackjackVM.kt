@@ -95,6 +95,7 @@ class BlackjackVM():ViewModel() {
         comprobarganadorbasiconoiniciado()
         iniciarseplanta()
         inicializarcartas()
+        inicializarcartas()
         iniciarporuser1()
         primerojugador1()
         juegoterminadoestado()
