@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +34,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
 import androidx.navigation.NavHostController
@@ -49,10 +54,7 @@ fun screenmenu(navcontroller: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        val context = LocalContext.current
-        var idimagen = context.resources.getIdentifier("blackjack", "drawable", context.packageName)
-        var painter = painterResource(id = idimagen)
-        Image(painter = painter, contentDescription = "blackjack")
+        Imagen(idimagen = "blackjack")
         Row(modifier = Modifier.padding(top = 40.dp)) {
             Button(
                 onClick = { navcontroller.navigate(Routes.screeninicial.route) },
@@ -73,14 +75,7 @@ fun screenmenu(navcontroller: NavHostController) {
 
 @Composable
 fun screeninicializacion(navcontroller: NavHostController, blackjackvm: BlackjackVM) {
-    blackjackvm.iniciar()
-    blackjackvm.crearbaraja()
-    blackjackvm.barajar()
-    blackjackvm.crearplayer()
-    blackjackvm.inicializarcartas()
-    blackjackvm.iniciarporuser1()
-    blackjackvm.primerojugador1()
-    blackjackvm.juegoterminadoestado()
+    blackjackvm.iniciarpartida()
     screenplayers(navcontroller,blackjackvm)
 }
 
@@ -108,12 +103,14 @@ fun screenplayers(navcontroller: NavHostController,blackjackvm: BlackjackVM) {
                     .border(3.dp, color = Color.Black),
                 fontSize = 20.sp,
             )
-            Column(
+            Column( modifier = Modifier.padding(top = 25.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "JUGADOR 2")
-                Text(text = "PUNTOS -> ${jugador2.contarpuntos()}")
+                Text(text = "JUGADOR 2 | Points --> ${jugador2.contarpuntos()}", color = Color(255, 255, 230), fontWeight = FontWeight.Bold, modifier  = Modifier
+                    .border(2.dp, Color.LightGray)
+                    .background(color = Color(130, 130, 96))
+                    .padding(3.dp))
             }
             Box(modifier=Modifier.padding(end = 180.dp)) {
                 var cont=0
@@ -122,11 +119,13 @@ fun screenplayers(navcontroller: NavHostController,blackjackvm: BlackjackVM) {
                     cont+=35
                 }
             }
-            Column(modifier = Modifier.padding(top = 100.dp)) {
-                Text(text = "JUGADOR 1")
-                Text(text = "PUNTOS -> ${jugador1.contarpuntos()}")
+            Column(modifier = Modifier.padding(top = 50.dp)) {
+                Text(text = "JUGADOR 1 | Points --> ${jugador1.contarpuntos()}",color = Color(255, 255, 230), fontWeight = FontWeight.Bold, modifier  = Modifier
+                    .border(2.dp, Color.LightGray)
+                    .background(color = Color(130, 130, 96))
+                    .padding(3.dp))
             }
-            Box(modifier=Modifier.padding(end = 150.dp)) {
+            Box(modifier=Modifier.padding(end = 180.dp)) {
                 var cont=0
                 for (carta in jugador1.listacartas!!){
                     Mostrarcarta(idimagen = carta.iddrawable,cont,0)
@@ -145,6 +144,7 @@ fun screenplayers(navcontroller: NavHostController,blackjackvm: BlackjackVM) {
                 Button(modifier = Modifier.padding(start = 20.dp), onClick = {
                     blackjackvm.cambiaturno()
                     blackjackvm.queturnoes()
+                    blackjackvm.jugadorseplanta()
                 }) {
                     Text(text = "PLANTARME")
                 }
@@ -159,11 +159,13 @@ fun screenplayers(navcontroller: NavHostController,blackjackvm: BlackjackVM) {
     ) {
         Text(text = "FIN DE PARTIDA", fontSize = 24.sp)
         Text(text = "GANADOR: ${ganadorjuego}", fontSize = 18.sp)
-        Row(modifier = Modifier.padding(top = 80.dp)) {
-            Button(onClick = { /*TODO*/ }) {
+        Column(modifier = Modifier.padding(top = 80.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Button(onClick = {  }, modifier = Modifier.clip(shape = RectangleShape)) {
                 Text(text = "VOLVER A JUGAR")
             }
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(start = 40.dp)) {
+            Button(onClick = {
+                //blackjackvm.reiniciartodo()
+                navcontroller.navigate(Routes.screenmenu.route) }) {
                 Text(text = "SALIR AL MENU PRINCIPAL")
             }
         }

@@ -1,6 +1,6 @@
 package com.alopgal962.blackjack.clases
 
-public class Jugador( var nombre:String="", var puntosdinero:Int=0, var listacartas:MutableList<Carta>?=null ) {
+public class Jugador( var nombre:String="",var seplanta:Boolean=false, var puntosdinero:Int=0, var listacartas:MutableList<Carta>?=null ) {
     
 
         fun contarcartas():Int{
@@ -25,6 +25,12 @@ public class Jugador( var nombre:String="", var puntosdinero:Int=0, var listacar
                 puntos+=carta.puntosmin
             }
             return puntos
+        }
+
+        fun borrarcartas(){
+            for (carta in listacartas!!){
+                listacartas!!.remove(carta)
+            }
         }
 
 }
