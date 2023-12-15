@@ -85,6 +85,7 @@ fun screeninicializacion(navcontroller: NavHostController, blackjackvm: Blackjac
  */
 @Composable
 fun screenplayers(navcontroller: NavHostController,blackjackvm: BlackjackVM) {
+    //Variables observeAsState
     val turnojugador: String by blackjackvm.jugadorturno.observeAsState(initial = blackjackvm.jugadorturno.value!!)
     val jugador1: Jugador by blackjackvm.jugador1queseve.observeAsState(initial = blackjackvm.jugador1queseve.value!!)
     val jugador2: Jugador by blackjackvm.jugador2queseve.observeAsState(initial = blackjackvm.jugador2queseve.value!!)
@@ -161,6 +162,7 @@ fun screenplayers(navcontroller: NavHostController,blackjackvm: BlackjackVM) {
                 }
             }
         }
+        //Cuando alguien gana o hay empate sale la opcion de volver atras y el recuento de los puntos de los jugadores
     } else Column(
         modifier = Modifier
             .fillMaxSize()
@@ -194,6 +196,9 @@ fun Imagen(idimagen: String) {
     Image(painter = painter, contentDescription = "imagenplayer")
 }
 
+/**
+ * Funcion recorrer recorre la lista de jugadores, y llama a la funcion carta para mostrarla
+ */
 @Composable
 fun recorrer(jugador: Jugador,numero:Int){
     var cont=0

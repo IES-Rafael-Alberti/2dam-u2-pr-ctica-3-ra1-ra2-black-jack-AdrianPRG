@@ -88,6 +88,7 @@ class BlackjackVM():ViewModel() {
      * LLama a las demas funciones para tenerlas agrupadas y llamarlas en el main
      */
     fun iniciarpartida(){
+        //Se inicializa todo
         iniciarbaraja()
         eliminarplayer()
         crearplayer()
@@ -205,6 +206,7 @@ class BlackjackVM():ViewModel() {
      * Para comprobar cuando un jugador se planta, ademas, su atributo seplanta es true, haciendo que ya no pueda pedir mas cartas
      */
     fun jugadorseplanta(){
+        //Se cambia el valor de se planta
         if (jugadorturno.value=="JUGADOR 1"){
             _jugador1mutable.value?.seplanta=true
         }
